@@ -9,7 +9,7 @@ let package = Package(
         .macOS(.v12)
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/apple/swift-system", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.2")
     ],
     targets: [
@@ -18,6 +18,7 @@ let package = Package(
         .executableTarget(
             name: "Mirror-Package",
             dependencies: [
+                .product(name: "SystemPackage", package: "swift-system"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ]),
         .testTarget(
