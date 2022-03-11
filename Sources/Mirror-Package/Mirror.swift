@@ -154,7 +154,10 @@ struct Mirror: ParsableCommand {
             print("weird source repo URL: \(source)")
             return ""
         }
-        let returnSubDir = String(subDir)
+        var returnSubDir = String(subDir)
+        if subDir.hasSuffix(".git") {
+            returnSubDir = String(subDir.dropLast(4))
+        }
 
         // If the subdirectory doesn't exist already, then we clone the dependency
         var directory = FilePath(FileManager.default.currentDirectoryPath)
