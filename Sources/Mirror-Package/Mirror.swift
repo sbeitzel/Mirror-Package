@@ -6,7 +6,7 @@ import SystemPackage
 struct Mirror: ParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Utility for creating a local mirror of a Swift project's package dependencies.",
-        version: "1.0.0"
+        version: "1.0.1"
     )
 
     @Option(name: [.long, .short], help: "Directory which will hold the local mirrors")
