@@ -25,6 +25,6 @@ Note that the update process can happen from any directory, since it just
 goes through all the subdirectories of the specified mirror directory and
 does a `git pull --rebase` for each one.
 
-To stop using the mirrors, simply delete `.swiftpm/config` from your project.
+To stop using the mirrors, simply delete `.swiftpm/configure/mirrors.json` from your project.
 
 [dependency mirroring]: https://github.com/apple/swift-evolution/blob/main/proposals/0219-package-manager-dependency-mirroring.md
