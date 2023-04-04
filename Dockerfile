@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM pirateguillermo/swift:latest as mirror-build
+FROM swift:5.8-jammy as mirror-build
 
 WORKDIR /opt/Mirror-Package
 
@@ -20,7 +20,7 @@ RUN mv /usr/local/bin/Mirror-Package /usr/local/bin/mirror
 # ==============================
 # Tool image
 # ==============================
-FROM pirateguillermo/swift:latest
+FROM swift:5.8-jammy
 
 COPY --from=mirror-build /usr/local/bin/mirror /usr/local/bin/mirror
 
