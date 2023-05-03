@@ -36,7 +36,14 @@ struct Mirror: ParsableCommand {
             subDir.append(fileName)
             FileManager.default.changeCurrentDirectoryPath(subDir.string)
             do {
-                let task = Process()
+                var task = Process()
+                print("Updating \(fileName)")
+                task.executableURL = URL(fileURLWithPath: gitPath)
+                task.arguments = ["restore", ":/"]
+                try task.run()
+                task.waitUntilExit()
+
+                task = Process()
                 task.executableURL = URL(fileURLWithPath: gitPath)
                 task.arguments = ["pull", "--rebase"]
                 try task.run()
