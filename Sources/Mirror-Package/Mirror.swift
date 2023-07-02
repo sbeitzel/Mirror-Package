@@ -6,7 +6,7 @@ import SystemPackage
 struct Mirror: ParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Utility for creating a local mirror of a Swift project's package dependencies.",
-        version: "1.0.1"
+        version: "1.1.0"
     )
 
     @Option(name: [.long, .short], help: "Directory which will hold the local mirrors")
@@ -36,7 +36,14 @@ struct Mirror: ParsableCommand {
             subDir.append(fileName)
             FileManager.default.changeCurrentDirectoryPath(subDir.string)
             do {
-                let task = Process()
+                var task = Process()
+                print("Updating \(fileName)")
+                task.executableURL = URL(fileURLWithPath: gitPath)
+                task.arguments = ["restore", ":/"]
+                try task.run()
+                task.waitUntilExit()
+
+                task = Process()
                 task.executableURL = URL(fileURLWithPath: gitPath)
                 task.arguments = ["pull", "--rebase"]
                 try task.run()
@@ -54,18 +61,18 @@ struct Mirror: ParsableCommand {
         var path = FilePath(FileManager.default.currentDirectoryPath)
         path.append("Package.resolved")
         let package = try String(contentsOfFile: path.string)
+        guard let packageData = package.data(using: .utf8) else { throw ReadError.unreadable }
+        let decodedPackage = try JSONDecoder().decode(DecodedManifest.self, from: packageData)
         var dependencyURLs = [String]()
-        for line in readLines(package) {
-            if line.contains("repositoryURL") {
-                print("Found a dependency: \(line)")
-                do {
-                    let source = try extractURL(line)
-                    if !source.isEmpty {
-                        dependencyURLs.append(source)
-                    }
-                } catch {
-                    print("Error extracting repo URL: \(error.localizedDescription)")
-                }
+        for pin in decodedPackage.pins {
+            switch pin.kind {
+            case "remoteSourceControl":
+                print("Found a dependency: \(pin.identity)")
+                dependencyURLs.append(pin.location)
+            case "localSourceControl":
+                print("Found a dependency that's already local: \(pin.identity)")
+            default:
+                print("Found a dependency I don't know how to mirror: \(pin.identity), kind: \(pin.kind)")
             }
         }
         // Now, we want to go to the mirror root and do a git clone of each dependency
@@ -97,46 +104,6 @@ struct Mirror: ParsableCommand {
                 }
             }
         }
-    }
-
-    func readLines(_ input: String) -> [String] {
-        var lines = [String]()
-        for line in input.split(separator: "\n").filter({!$0.isEmpty}) {
-            lines.append("\(line)")
-        }
-        return lines
-    }
-
-    func extractURL(_ from: String) throws -> String {
-        let range = NSRange(
-            from.startIndex..<from.endIndex,
-            in: from
-        )
-        let sourcePattern = #".*"repositoryURL": "(.*)",.*"#
-        let regex = try NSRegularExpression(
-            pattern: sourcePattern,
-            options: []
-        )
-        let matches = regex.matches(in: from,
-                                    options: [],
-                                    range: range)
-        guard let match = matches.first else {
-            print("No matching URL found")
-            return ""
-        }
-
-        for rangeIndex in 0..<match.numberOfRanges {
-            let matchRange = match.range(at: rangeIndex)
-            // Ignore if we are matching the entire line
-            if matchRange == range { continue }
-            // Extract the substring matching the capture group
-            if let substringRange = Range(matchRange, in: from) {
-                let capture = String(from[substringRange])
-                return capture
-            }
-        }
-        // if we're here, we haven't found a URL
-        return ""
     }
 
     func registerMirror(source: String, mirror: String) throws {
