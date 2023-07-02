@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 * Update parsing for swift-tools-version:5.6
+* Perform a `git restore` on each mirror before pulling updates
+* Use Ubuntu "jammy" and Swift 5.8 to build the Docker image
 
 ## [1.0.1]
 
