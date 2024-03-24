@@ -1,7 +1,7 @@
 # ================================
 # Build image
 # ================================
-FROM swift:5.8-jammy as mirror-build
+FROM swift:5.10.0-jammy as mirror-build
 
 WORKDIR /opt/Mirror-Package
 
@@ -20,7 +20,7 @@ RUN mv /usr/local/bin/Mirror-Package /usr/local/bin/mirror
 # ==============================
 # Tool image
 # ==============================
-FROM swift:5.8-jammy
+FROM swift:5.10.0-jammy
 
 COPY --from=mirror-build /usr/local/bin/mirror /usr/local/bin/mirror
 

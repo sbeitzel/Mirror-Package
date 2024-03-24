@@ -110,8 +110,8 @@ struct Mirror: ParsableCommand {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: swiftPath)
         task.arguments = ["package", "config", "set-mirror",
-                          "--original-url", source,
-                          "--mirror-url", mirror]
+                          "--original", source,
+                          "--mirror", mirror]
         try task.run()
         task.waitUntilExit()
     }
