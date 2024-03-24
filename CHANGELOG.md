@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Use Swift 5.10.0 to build the application
+* Change deprecated options, `--original-url` and `--mirror-url` to the preferred `--original` and `--mirror`
 
 ## [1.0.2]
 
