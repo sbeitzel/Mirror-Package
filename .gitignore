@@ -8,3 +8,6 @@ DerivedData/
 Dockerfile.swiftarm
 Makefile
 .vscode
+mirror.sh
+mirror
+
